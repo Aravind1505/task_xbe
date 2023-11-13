@@ -51,15 +51,15 @@ async function handleSubmit(event) {
     const books = await Promise.all([booksData]);
     const books_unfiltered = books[0].docs;
     const books_filtered = books_unfiltered.filter((book) => book.cover_edition_key !==undefined);
-    console.log(books_filtered);
+    // console.log(books_filtered);
     
     let edition_keys = [];
     for(let i = 0; i < books_filtered.length; i++) {
         edition_keys.push(books_filtered[i].cover_edition_key);
     }
-    const book_edition = await fetchBookData(edition_keys);
-    const book_edition_promise = await Promise.all([book_edition]);
-    console.log(book_edition_promise[0]);
+    // const book_edition = await fetchBookData(edition_keys);
+    // const book_edition_promise = await Promise.all([book_edition]);
+    // console.log(book_edition_promise[0]);
     return books_filtered;
 }
 
