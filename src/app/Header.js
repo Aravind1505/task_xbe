@@ -49,16 +49,37 @@ async function handleSubmit(event) {
 
     const booksData = await fetchData(props_filter);
     const books = await Promise.all([booksData]);
-    console.log(books[0].docs);
-    // console.log(books[0].docs[0]);
-    // console.log(books[0].docs[0].title);
-    // console.log(books[0].docs[0].author_name[0]);
-    // console.log(books[0].docs[0].ratings_average);
-    return books[0].docs;
+    const books_unfiltered = books[0].docs;
+    const books_filtered = books_unfiltered.filter((book) => book.cover_edition_key !==undefined);
+    console.log(books_filtered);
+    
+    let edition_keys = [];
+    for(let i = 0; i < books_filtered.length; i++) {
+        edition_keys.push(books_filtered[i].cover_edition_key);
+    }
+    const book_edition = await fetchBookData(edition_keys);
+    const book_edition_promise = await Promise.all([book_edition]);
+    console.log(book_edition_promise[0]);
+    return books_filtered;
 }
 
 async function fetchData(props) {
     const url = "https://openlibrary.org/search.json?q=";
     const response = await fetch(url + props.query);
+    return response.json();
+}
+
+async function fetchBookData(cover_edition_keys) {
+    let editions = "";
+    for(let i = 0; i < cover_edition_keys.length; i++) {
+        if( i == (cover_edition_keys.length - 1)) {
+            editions += "OLID:" + cover_edition_keys[i];
+        } else {
+            editions += "OLID:" + cover_edition_keys[i] + ",";
+        }
+    }
+    const url = "https://openlibrary.org/api/books?bibkeys=";
+    const format = "&format=json";
+    const response = await fetch(url + editions + format);
     return response.json();
 }
