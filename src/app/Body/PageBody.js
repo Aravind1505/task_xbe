@@ -2,8 +2,8 @@ import Book from "./Book";
 
 export default function PageBody(props) {
 
-    return <div className="flex w-full h-full  text-black ">
-        <ul className="flex gap-x-8 gap-y-5 p-5 flex-start flex-wrap ">
+    return <div className="flex w-full h-full text-black  ">
+        <ul className="grid gap-x-8 gap-y-5 p-5 grid-cols-5">
             {props.books.map((e) => {
                 return (
                     <div key={e.key}>
