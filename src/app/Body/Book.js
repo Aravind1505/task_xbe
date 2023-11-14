@@ -13,13 +13,15 @@ export default function Book(props) {
         <div className="h-44">
             <img src={cover} alt="image" className=" Image rounded-md max-h-44">{props.image}</img>
         </div>
-        <div className="flex flex-col justify-between">
+        <div className="flex flex-col justify-between w-full">
             <div className="flex flex-col gap-y-1">
                 <div className="Title">{props.title}</div>
                 <div className="Author text-sm">{props.author}</div>
                 <div className="Rating text-sm">{props.rating}</div>
             </div>
-            <IoMdHeartEmpty className="text-3xl" onClick={test}/>
+            <div className="bg-red-200 flex flex-row gap-x-2 p-2 border-none bg-yellow-500 rounded-md items-center">
+                <IoMdHeartEmpty className="text-3xl" onClick={test} /> Add to Favourites
+            </div>
         </div>
     </div>
 }
