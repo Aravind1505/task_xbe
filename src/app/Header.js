@@ -21,14 +21,27 @@ export default function Header(props) {
 
 function Filters() {
 
-    const filters = [{type: "author"}, {type: "category"}, {type:"ratings"}]
+    const filters = [
+        {
+            type: "author",
+            filterId : "author-filter"
+        }, 
+        {
+            type: "category",
+            filterId : "category-filter"
+        }, 
+        {
+            type:"ratings",
+            filterId : "ratings-filter"
+        }
+    ];
 
     return (
-        <div className="Filters flex items-center ">
+        <div className="Filters flex items-center">
             <ul className="flex items-center">
                 {filters.map((filter, index) => (
                     <li key={index} className="flex items-center">
-                        <input type="checkbox" className="filter-checkbox ml-2 text-sm font-medium rounded"></input>
+                        <input type="radio" className="filter-checkbox ml-2 text-sm font-medium rounded" name="filters-entry" id={filter.filterId} value={filter.type}></input>
                         <label key={index} className="ml-2 text-lg font-medium text-gray-900">{filter.type}</label>
                     </li>
                 ))}
@@ -41,33 +54,45 @@ async function handleSubmit(event) {
     event.preventDefault();
 
     const props_filter = {
-        query: event.target[0].value,
-        author: event.target.elements[2].checked,
-        category: event.target.elements[3].checked,
-        ratings: event.target.elements[4].checked
+        query: event.target.querySelector("#default-search").value,
+        author: event.target.querySelector("#author-filter").checked,
+        category: event.target.querySelector("#category-filter").checked,
+        ratings: event.target.querySelector("#ratings-filter").checked
     };
 
-    const booksData = await fetchData(props_filter);
+    const booksData = await filter_search(props_filter);
     const books = await Promise.all([booksData]);
     const books_unfiltered = books[0].docs;
     const books_filtered = books_unfiltered.filter((book) => book.cover_edition_key !==undefined);
-    // console.log(books_filtered);
     
-    let edition_keys = [];
-    for(let i = 0; i < books_filtered.length; i++) {
-        edition_keys.push(books_filtered[i].cover_edition_key);
-    }
-    // const book_edition = await fetchBookData(edition_keys);
-    // const book_edition_promise = await Promise.all([book_edition]);
-    // console.log(book_edition_promise[0]);
     return books_filtered;
 }
 
-async function fetchData(props) {
+async function filter_search(props) {
+    // if(props.author === false && props.category===false && props.ratings===false) {
+    //     const response = await fetchSearchbyTitle(props);
+    //     return response;
+    // } else if (props.author==true && props.category===false && props.ratings===false) {
+    //     const response = await fetchSearchbyAuthor(props);
+    //     return response;
+    // }
+    const response = await fetchSearchbyTitle(props);
+    return response;
+}
+
+async function fetchSearchbyTitle(props) {
     const url = "https://openlibrary.org/search.json?q=";
     const search_query = encodeURIComponent(props.query.trim());
     const fields = "&fields=title,cover_edition_key,author_name,ratings_average";
     const api_call = url + search_query + fields;
+    const response = await fetch(api_call);
+    return response.json();
+}
+
+async function fetchSearchbyAuthor(props) {
+    const url = "https://openlibrary.org/search/authors.json?q=";
+    const search_query = encodeURIComponent(props.query.trim());
+    const api_call = url + search_query;
     const response = await fetch(api_call);
     return response.json();
 }
