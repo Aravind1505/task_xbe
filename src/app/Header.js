@@ -65,7 +65,10 @@ async function handleSubmit(event) {
 
 async function fetchData(props) {
     const url = "https://openlibrary.org/search.json?q=";
-    const response = await fetch(url + props.query);
+    const search_query = encodeURIComponent(props.query.trim());
+    const fields = "&fields=title,cover_edition_key,author_name,ratings_average";
+    const api_call = url + search_query + fields;
+    const response = await fetch(api_call);
     return response.json();
 }
 
